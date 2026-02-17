@@ -145,6 +145,8 @@ public class Hotel
     /// <summary>
     /// Gets the hotel with the specified game host. (ex. <c>game-us.habbo.com</c>)
     /// </summary>
-    public static Hotel FromGameHost(string gameHost) => All.FirstOrDefault(x => x.GameHost.Equals(gameHost, StringComparison.OrdinalIgnoreCase))
-        ?? throw new Exception($"Unknown game host: \"{gameHost}\".");
+    public static Hotel FromGameHost(string gameHost) =>
+        All.FirstOrDefault(x => x.GameHost.Equals(gameHost, StringComparison.OrdinalIgnoreCase)) ??
+        All.FirstOrDefault(x => x.Host.Equals(gameHost, StringComparison.OrdinalIgnoreCase)) ??
+        throw new Exception($"Unknown game host: \"{gameHost}\".");
 }

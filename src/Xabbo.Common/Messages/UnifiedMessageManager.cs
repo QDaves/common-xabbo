@@ -78,7 +78,7 @@ public sealed class UnifiedMessageManager : IMessageManager
             }
 
             using HttpClient http = new();
-            using Stream ins = await http.GetStreamAsync("https://raw.githubusercontent.com/b7c/Xabbo.Messages/master/messages.ini", cancellationToken);
+            using Stream ins = await http.GetStreamAsync("https://raw.githubusercontent.com/QDaves/messages-xabbo/messages-xabbo/messages.ini", cancellationToken);
             using Stream outs = File.OpenWrite(_mapFilePath);
             await ins.CopyToAsync(outs, cancellationToken);
         }

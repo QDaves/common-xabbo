@@ -84,25 +84,25 @@ public sealed class MessageManager(string? filePath = null, ILoggerFactory? logg
             if (!Fetch)
                 throw new InvalidOperationException("Attempt to fetch map file when Fetch is false.");
 
+            string tmpPath = _mapFilePath + ".tmp";
             try
             {
                 mapFileInfo.Directory?.Create();
 
                 using HttpClient http = new();
                 Log.LogInformation("Fetching message map file from '{MapFileUrl}'...", MessagesFileUrl);
-                using Stream ins = await http.GetStreamAsync(MessagesFileUrl, cancellationToken);
-                using Stream outs = File.OpenWrite(_mapFilePath);
-                await ins.CopyToAsync(outs, cancellationToken).ConfigureAwait(false);
+                using (Stream ins = await http.GetStreamAsync(MessagesFileUrl, cancellationToken))
+                using (Stream outs = File.Create(tmpPath))
+                {
+                    await ins.CopyToAsync(outs, cancellationToken).ConfigureAwait(false);
+                }
+                File.Move(tmpPath, _mapFilePath, overwrite: true);
             }
             catch (Exception ex)
             {
                 Log.LogError(ex, "Failed to fetch message map file: {Error}.", ex.Message);
 
-                try { File.Delete(_mapFilePath); }
-                catch (Exception deleteException)
-                {
-                    Log.LogError("Failed to remove message map file: {Error}.", deleteException.Message);
-                }
+                try { File.Delete(tmpPath); } catch { }
 
                 throw;
             }

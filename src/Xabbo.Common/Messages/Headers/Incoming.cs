@@ -77,6 +77,7 @@ public sealed class Incoming : Headers
     public Header OwnerPresence { get; private set; }
     public Header AddItem { get; private set; }
     public Header RemoveItem { get; private set; }
+    public Header ItemRemoveMultiple { get; private set; }
     public Header UpdateItem { get; private set; }
     public Header StuffDataUpdate { get; private set; }
     public Header DoorOut { get; private set; }

@@ -85,6 +85,7 @@ public sealed class Incoming : Headers
     public Header DoorIn { get; private set; }
     public Header ActiveObjectAdd { get; private set; }
     public Header ActiveObjectRemove { get; private set; }
+    public Header ObjectRemoveMultiple { get; private set; }
     public Header ActiveObjectUpdate { get; private set; }
     public Header InventoryAddOrUpdateFurni { get; private set; }
     public Header InventoryRemoveFurni { get; private set; }

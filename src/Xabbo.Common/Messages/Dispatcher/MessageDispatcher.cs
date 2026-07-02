@@ -379,7 +379,10 @@ public sealed class MessageDispatcher : IMessageDispatcher
 
         if (unknownIdentifiers.Any() || unresolvedIdentifiers.Any())
         {
-            throw new InterceptorBindingFailedException(handler, unknownIdentifiers, unresolvedIdentifiers);
+            Debug.WriteLine(
+                $"[MessageDispatcher] {handlerType.FullName}: skipping identifiers not present on the connected client. " +
+                $"unknown=[{string.Join(", ", unknownIdentifiers.Select(i => i.ToString()))}] " +
+                $"unresolved=[{string.Join(", ", unresolvedIdentifiers.Select(i => i.ToString()))}]");
         }
 
         List<BindingCallback> callbackList = new();
@@ -404,7 +407,8 @@ public sealed class MessageDispatcher : IMessageDispatcher
                 HashSet<Header> uniqueHeaders = new();
                 foreach (Identifier identifier in receiveAttribute.Identifiers)
                 {
-                    Header header = Messages[identifier];
+                    if (!Messages.TryGetHeader(identifier, out Header? header))
+                        continue;
                     if (!uniqueHeaders.Add(header)) continue;
 
                     callbackList.Add(CreateCallback(header, handler, methodInfo));
@@ -430,7 +434,8 @@ public sealed class MessageDispatcher : IMessageDispatcher
                 HashSet<Header> uniqueHeaders = new();
                 foreach (Identifier identifier in interceptAttribute.Identifiers)
                 {
-                    Header header = Messages[identifier];
+                    if (!Messages.TryGetHeader(identifier, out Header? header))
+                        continue;
                     if (!uniqueHeaders.Add(header)) continue;
 
                     callbackList.Add(CreateInterceptCallback(header, handler, methodInfo));
